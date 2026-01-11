@@ -15,10 +15,23 @@
 		</div>
 	</div>
 	{{ end }}
+	{{ $posts := (where .Site.Pages "Type" "post") }}
+	{{ if gt (len $posts) 0 }}
+	<div class="archive-dates">
+		<h3>{{ T "Date archives" }}</h3>
+		<div class="category-list">
+			{{ range ($posts.GroupByDate "2006") }}
+			<a class="button" href="#{{ .Key }}">{{ .Key }}</a>
+			{{ end }}
+		</div>
+	</div>
+	{{ end }}
 	<div class="full-archives h-feed">
 		<h3>{{ T "Full post list" }}</h3>
 		{{ $list := (where .Site.Pages "Type" "post") }}
-		{{ range $list }}
+		{{ range ($list.GroupByDate "2006") }}
+		<h4 id="{{ .Key }}">{{ .Key }}</h4>
+		{{ range .Pages }}
 
 		<p class="h-entry">
 			<a href="{{ .Permalink }}" class="u-url"><time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">{{ partial "dateformat/short" . }}</time></a>:
@@ -28,6 +41,7 @@
 			<span class="p-summary">{{ .Content | plainify | htmlUnescape | truncate 150 }}</span>
 		</p>
 
+		{{ end }}
 		{{ end }}
 	</div>
 
